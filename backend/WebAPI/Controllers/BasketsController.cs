@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Business.Abstract;
+using Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,5 +13,41 @@ namespace WebAPI.Controllers
     [ApiController]
     public class BasketsController : ControllerBase
     {
+        IBasketService _basketService;
+
+        public BasketsController(IBasketService basketService)
+        {
+            _basketService = basketService;
+        }
+
+        [HttpGet("getbasket")]
+        public IActionResult GetAll()
+        {
+            var result = _basketService.GetAll();
+
+            if (result.Success)
+            {
+               return Ok(result);
+            }else
+            {
+               return BadRequest(result);
+            }
+        }
+
+        [HttpPost("add")]
+        public IActionResult Add(Basket basket)
+        {
+            basket.CreateDate = DateTime.Now;
+            var result = _basketService.Add(basket);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
     }
 }
